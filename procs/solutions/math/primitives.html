@@ -50,10 +50,10 @@ def place_rect_on_canvas(width: int, height: int,
     wfin = w + width # col fin
     hfin = h + height # row fin
     for r in range(len(canvas)):
-        if r &le; wfin and r &ge; w:
+        if r &le; hfin and r &ge; h:
             row = canvas[r]
             for c in range(len(row)):
-                if c &le; hfin and c &ge; h:
+                if c &le; wfin and c &ge; w:
                     canvas[r][c] = 1
     return canvas
 
