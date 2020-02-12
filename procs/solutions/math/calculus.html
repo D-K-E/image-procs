@@ -74,7 +74,7 @@ def sumCheck(f1, f2, v):
     return derc == (derf1 + derf2)
 
 # Answer 2
-def area(b, h): return b * h / 2
+def area(arg, f1, f2): return f1(arg) - f2(arg)
 
 def integ(f: Callable, args: list, stepsize: float):
     counter = 0
@@ -87,8 +87,50 @@ def integ(f: Callable, args: list, stepsize: float):
 def f(x): return x + 3
 def g(x): return 12 - 2 * x
 
+def lined(v1, v2):
+    return math.sqrt( (v1[0] - v2[0]) ** 2 + (v1[1] - v2[1]) ** 2 )
+
 def areaTriangle(fline1=f, fline2=g, v1=(1,4), v2=(4, 4), v3=(3,6)): 
     "compute area of triangle using integral"
+    #6     v3
+    #5
+    #4 v1  _ v2 
+    #3
+    #2
+    #1  
+    #0 1 2 3 4 5 6 
+    hb = (3, 4)
+    leftArea = 0
+    for x in range(v1[0], hb[0]+1):
+        leftArea += area(x, fline1, fline2)
+    rightArea = 0
+    for x in range(hb[0], v2[0]+1):
+        rightArea += area(x, fline1, fline2)
+    return leftArea + rightArea
+
+# answer 3
+def rect_area(p1, w, f=lambda x: x+5, g=lambda x: x+13):
+    R = 0
+    for x in range(p[0], p[0] + w+1):
+        R += area(x, f, g)
+    return R
+
+# answer 4
+def volume(p1, w, h, l):
+    xfin = p1[0] + w
+    yfin = p1[1] + h
+    zfin = p1[1] + z
+    zone1 = 0
+    for i in range(p1[0], xfin + 1):
+        zone1 += 1
+    zone2 = 0
+    for i in range(p1[1], yfin + 1):
+        zone2 += 1
+    zone3 = 0
+    for i in range(p1[2], zfin + 1):
+        zone3 += 1
+    return zone1 * zone2 * zone3
+
 </code>
                                                </pre>
             </div>
@@ -175,14 +217,32 @@ sumCheck: function [x] [
             <div id="answer-2" class="container-fluid">
                 <p>
                     Write a program to compute the area of a triangle
-                    using integral function defined above. Triangle area
-                    is b x h x 1/2. b is base side, h, height that is
-                    perpendicular to base.
-
+                    using integral function defined above. The area of the
+                    triangle is computed in two parts. Left Area and Right
+                    Area, where you compute left section of a
+                    perpendicular to the base of a triangle, and then the
+                    right. Any area between zones is computed as a
+                    difference in integral. \(
+                    f(x) = x + 3 \hspace{1em} g(x) = x * 3 +8
+                    \hspace{1em} \int_{min_x}^{max_x} (f(x) - g(x)) \times
+                    dx
+                    \)
+                    Vertices of triangle: (1, 4) (4,4) (3, 6)
+                    two equations of sides: \( f(x) = x+3 \hspace{1em}
+                    g(x) = 12 - 2*x\)
                 </p>
-
             </div>
         </li>
+        <li>
+            <div id="answer-3" class="container-fluid">
+                <p>
+                    Given the top left corner of the rectangle (1, 3) and
+                    width 13, height 46, compute the area of the rectangle
+                    using the integral.
+                </p>
+            </div>
+        </li>
+
 
     </ol>
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">

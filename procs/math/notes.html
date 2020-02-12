@@ -1392,20 +1392,29 @@ integ: function [[a] steps] [
                         differentiation. Did you notice anything strange ?
                     </li>
                     <li>Write a program to compute the area of a triangle
-                        using integral function defined above. Triangle area
-                        is b x h x 1/2. b is base side, h, height that is
-                        perpendicular to base. The two sides of the triangle
-                        are determined by the following equations: \( f(x) = x
-                        + 3 \hspace{1em} g(x) = 12 - 2x \). The vertices of
-                        the triangle are: (1, 4), (4, 4), (3, 6). Hint:
-                        compute the perpendicular to a base using
-                        trigonometry.
+                        using integral function defined above. The area of the
+                        triangle is computed in two parts. Left Area and Right
+                        Area, where you compute left section of a
+                        perpendicular to the base of a triangle, and then the
+                        right. Any area between zones is computed as a
+                        difference in integral. \(
+                        f(x) = x + 3 \hspace{1em} g(x) = x * 3 +8 
+                        \hspace{1em} \int_{min_x}^{max_x} (f(x) - g(x)) \times
+                        dx
+                        \)
+                        Vertices of triangle: (1, 4) (4,4) (3, 6)
+                        two equations of sides: \( f(x) = x+3 \hspace{1em}
+                        g(x) = 12 - 2*x\)
                     </li>
-                    <li>Write a program to compute the area of a rectangle
-                        using integral function defined above. Rectangle area
-                        is width x height
+                    <li>Given the top left corner of the rectangle p1, width,
+                        ,the equation of top side
+                        \(f(x) = x+5\), the equation of bottom side \(g(x) = x
+                        + 13\)
+                        compute the area of the rectangle
+                        using the integral.
                     </li>
-                    <li>Write a program to compute the volume of cuboid.
+                    <li>Write a program to compute the volume of cuboid. Given
+                        a corner p1 (x,y,z), width, height, length.
                         Volume is \( w \times h \times l \) w, width, h,
                         height, l, length.
                     </li>
