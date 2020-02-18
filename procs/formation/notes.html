@@ -10,8 +10,7 @@
 <article>
     <section class="toc" id="processing-toc">
         <ul>
-            <li><a href="#"></a></li>
-            <li><a href="#3d-2d-projection">3D - 2D Transformations</a></li>
+            <li><a href="#scattering-reflection">Scattering</a></li>
             <li><a href="#"></a></li>
             <li><a href="#"></a></li>
             <li><a href="#"></a></li>
@@ -19,315 +18,112 @@
         </ul>
     </section>
     <div class="container-fluid improc-container">
-        <section class="improc-section" id="geometric-primitive">
-            <h3>Geometric Primitives</h3>
+        <section class="improc-section" id="scattering-reflection">
+            <h3>Scattering</h3>
             <div class="improc-summary container-fluid">
                 <h4>Problem Statement</h4>
-                <p id="geometric-primitive-problem-statement" class="lead text-wrap text-monospace" style="width: 50em;">
-                    How do we define shapes ? By using geometric primitives. What
-                    are those ?
+                <p id="scattering-reflection-problem-statement" class="lead text-wrap text-monospace" style="width: 50em;">
+                    What happens when light hits on the surface of an object ?
                 </p>
             </div>
             <h4>Description</h4>
             <p class="improc-description text-monospace text-wrap" style="width: 62em;">
-                Here are some geometric primitives and their representations.
-                <dl class="row text-monospace text-wrap container-fluid">
-                    <div class="row">
-                        <dt class="col-md-3 col-sm">
-                            2D Point
-                        </dt>
-                        <dd class="col-md-9 col-sm">
-                            A point, x, is defined using two real numbers is
-                            expressed as \(\textbf{x} = (x, y) \in R^2\)
-                        </dd>
-                    </div>
-                    <div class="row">
-                        <dt class="col-md-3 col-sm">
-                            2D Point in homogeneous coordinates
-                        </dt>
-                        <dd class="col-md-9 col-sm">
-                            A point, \(\tilde x\), is defined using three real numbers is
-                            expressed as \[
-                            \tilde x = (x, y, w) \in P^2
-                            \] where \(P^2 = R^3 - (0, 0, 0)\)
-                        </dd>
-                    </div>
-                    <div class="row">
-                        <dt class="col-md-3 col-sm">
-                            2D Point as Augmented Vector
-                        </dt>
-                        <dd class="col-md-9 col-sm">
-                            An augmented vector, \( \bar x \) is defined as \(
-                            \bar x = (x, y, 1) \). Its relation to homogeneous
-                            coordinate is \[
-                            \tilde x = \bar x w = (x * w, y * w, w)
-                            \]
-                        </dd>
-                    </div>
-                    <div class="row">
-                        <dt class="col-md-3 col-sm">
-                            2D Line
-                        </dt>
-                        <dd class="col-md-9 col-sm">
-                            A line, \(\tilde l \), defined in in two dimensions is
-                            expressed as \(0 = mx - y + b\)
-                        </dd>
-                    </div>
-                </dl>
+                When thinking about light scattering, it is better to let the model
+                guide the discourse rather than the inverse. Light scattering
+                is modeled as
+                <span class="text-info">bidirectional reflectance distribution
+                    function</span> ( <abbr title="bidrectional reflectance
+                    distribution function">BRDF</abbr> ). It describes how
+                much wavelength incoming to a relative surface coordinate is
+                emitted. The function can be written as \(
+                f_r(\theta_{\text{incoming}}, \phi_{\text{incoming}},
+                \theta_{\text{emitted}}, \phi_{\text{emitted}}; \lambda)
+                \) where \(\phi\) and \( \theta \) are spherical coordinates
+                for the incident flux, meaning they are the angles in which
+                the flux is arriving and emitted.
             </p>
-            <h4>Code snippets</h4>
-            <div class="code-container">
-                <ul class="nav nav-tabs" id="geometric-primitive-code-tab" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" id="geometric-primitive-haskell-tab" data-toggle="tab" href="#geometric-primitive-haskell" role="tab" aria-controls="geometric-primitive-haskell" aria-selected="true">Haskell</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="geometric-primitive-python-tab" data-toggle="tab" href="#geometric-primitive-python" role="tab" aria-controls="geometric-primitive-python" aria-selected="false">Python</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="geometric-primitive-cpp-tab" data-toggle="tab" href="#geometric-primitive-cpp" role="tab" aria-controls="geometric-primitive-cpp" aria-selected="false">Cpp</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="geometric-primitive-nim-tab" data-toggle="tab" href="#geometric-primitive-nim" role="tab" aria-controls="geometric-primitive-nim" aria-selected="false">Nim</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="geometric-primitive-red-tab" data-toggle="tab" href="#geometric-primitive-red" role="tab" aria-controls="geometric-primitive-red" aria-selected="false">Red</a>
-                    </li>
-                </ul>
-                <div class="tab-content" id="geometric-primitive-code-content">
-                    <div class="tab-pane fade show active" id="geometric-primitive-haskell" role="tabpanel" aria-labelledby="geometric-primitive-haskell-tab">
-                        <pre>
-<code class="language-haskell">
---|'convert2DHomoToInHomo' convert homogeneous 2 coordinate to inhomogeneous
-convert2DHomoToInHomo :: (Real, Real, Real) -&#62; (Real, Real)
-convert2DHomoToInHomo (0, 0, 0) = error "Can not have (0, 0, 0) as argument"
-convert2DHomoToInHomo (_, _, 0) = 
-    error "Can not have an inhomogeneous equivalent for given point"
-convert2DHomoToInHomo (x, y, w) = (x / w, y / w)
---|'convert2DInHomoToHomo' convert inhomogeneous to homogeneous ones
-convert2DInHomoToHomo :: Real -&#62; (Real, Real) -&#62; (Real, Real, Real)
-convert2DInHomoToHomo 0 (_, _) = error "w has to be bigger than 0"
-convert2DInHomoToHomo w (x, y) = (x * w, y * w, w)
-</code>
-                                                           </pre>
-                    </div>
-                    <div class="tab-pane fade" id="geometric-primitive-python" role="tabpanel" aria-labelledby="geometric-primitive-python-tab">
-                        <pre>
-<code class="language-python">
-def convert2DHomoToInHomo(2d_homo_point):
-    "convert 2d homogeneous coordinate to inhomogeneous coordinate"
-    if 2d_homo_point == (0, 0, 0):
-        raise ValueError("Can not have (0, 0, 0) as argument")
-    x, y, w = 2d_homo_point
-    if w == 0:
-        raise ValueError("Can not have an equivalent inhomogeneous coordinate")
-    return (x / w, y / w)
-
-def convert2DInHomoToHomo(2dpoint, w):
-    "convert 2d inhomogeneous coordinate to homogeneous using w"
-    if w == 0:
-        raise ValueError("Can not have a representation in projection space")
-    x, y = 2dpoint
-    return (x * w, y * w, w)
-</code>
-                        </pre>
-                    </div>
-                    <div class="tab-pane fade" id="geometric-primitive-cpp" role="tabpanel" aria-labelledby="geometric-primitive-cpp-tab">
-                        <pre>
-<code class="language-cpp">
-struct Point2D {
-    double x;
-    double y;
-};
-struct PointHomo2D {
-    double x;
-    double y;
-    double z;
-};
-Point2D convert2DHomoToInHomo ( PointHomo2D p)
-{
-    /*convert 2d homogeneous coordinate to inhomogeneous coordinate*/
-    double px = p.x;
-    double py = p.y;
-    double pw = p.w;
-    if ( px == 0.0 && py == 0.0 && pw == 0.0) {
-        throw std::invalid_argument("can not have (0, 0, 0) as argument");
-    } else if (pw == 0.0) {
-        throw std::invalid_argument("Can not have an equivalent inhomogeneous coordinate");
-    }
-    Point2D dpoint2;
-    dpoint2.x = px / pw;
-    dpoint2.y = py / pw;
-    return dpoint2;
-}
-PointHomo2D convert2DInHomoToHomo ( double w, Point2D p) 
-{
-    /*convert 2d inhomogeneous coordinate to homogeneous using w*/
-    if (w == 0.0) {
-        throw std::invalid_argument("Can not be represented in projection space");
-    }
-    PointHomo2D point;
-    point.x = p.x * w;
-    point.y = p.y * w;
-    point.w = w;
-    return point;
-}
-</code>
-                        </pre>
-                    </div>
-                    <div class="tab-pane fade" id="geometric-primitive-nim" role="tabpanel" aria-labelledby="geometric-primitive-nim-tab">
-                        <pre><code class="language-nim">
-Point2D = tuple[x: float, y: float]
-Point2DHomo = tuple[x: float, y: float, w: float]
-proc convert2DHomoToInHomo(p: Point2DHomo): Point2D =
-    ## convert 2d homogeneous coordinate to inhomogeneous coordinate
-    if (p.x == 0.0 and p.y == 0.0 and p.w == 0.0) == true:
-        raise newException(ValueError, "can not have (0, 0, 0) as argument")
-    elif p.w == 0.0:
-        raise newException(ValueError,
-            "point can not be represented as inhomogeneous coordinate"
-            )
-    var point: Point2D
-    point.x = p.x / p.w
-    point.y = p.y / p.w
-    return point
-
-proc convert2DInHomoToHomo(p: Point2D, w: float): Point2DHomo =
-    ## convert 2d inhomogeneous coordinate to homogeneous using w
-    if w == 0.0:
-        raise newException(ValueError,
-            "point can not be represented projection 2d space"
-            )
-    var point: Point2DHomo
-    point.x = p.x * w
-    point.y = p.y * w
-    point.w = w
-    return point
-</code>
-                        </pre>
-                    </div>
-                    <div class="tab-pane fade" id="geometric-primitive-red" role="tabpanel" aria-labelledby="geometric-primitive-red-tab">
-                        <pre>
-                        <code class="language-red">
-convert2DHomoToInHomo: function [Point2DHomo][
-    ;; convert 2d homogeneous coordinate to inhomogeneous coordinate
-
-    x: pick Point2DHomo 1
-    y: pick Point2DHomo 2
-    w: pick Point2DHomo 3
-    if x == 0 && y == 0 && w == 0 [
-        make error! [
-            type: value Id: value arg1: "can not have (0, 0, 0) as argument" 
-        ]
-
-    ]
-    if w == 0 [
-        make error! [
-            type: value Id: value 
-            arg1: "point can not be represented as inhomogeneous coordinate" 
-        ]
-    ]
-    res1: x / w
-    res2: y / w
-    return [res1 res2]
-]
-convert2DInHomoToHomo: function [Point2D w][
-    ;; convert 2d inhomogeneous coordinate to homogeneous using w
-    if w == 0 [
-        make error! [
-            type: value Id: value 
-            arg1: "point can not be represented as inhomogeneous coordinate" 
-        ]
-    ]
-    x: pick Point2D 1
-    y: pick Point2D 2
-    res1: x * w
-    res2: y * w
-    return [res1 res2 w]
-]
-                        </code>
-                        </pre>
-                    </div>
-                </div>
-            </div>
-            <footer class="container-fluid">
-                <h4>References</h4>
-                <ul id="geometric-primitive-references">
-                    <li class="work-ref"><cite></cite></li>
-                </ul>
-            </footer>
-        </section>
-    </div>
-    <div class="container-fluid improc-container">
-        <section class="improc-section" id="3d-2d-projection">
-            <h3>3D - 2D Projections</h3>
-            <div class="improc-summary container-fluid">
-                <h4>Problem Statement</h4>
-                <p id="3d-2d-projection-problem-statement" class="lead text-wrap text-monospace" style="width: 50em;">
-                    Human visual system perceives the world in 3 dimensions,
-                    whereas computer screens are 2 dimensional media.
-                    How do we then represent 3d objects in computer screen ?
-                </p>
-            </div>
-            <h4>Description</h4>
             <p class="improc-description text-monospace text-wrap" style="width: 62em;">
-                Algorithm description
+                It is a reciprocal function where you can change the roles of the
+                incoming and emitted angles and you would obtain the same value
+                anyway due to the physics of light transport. The full model
+                has two parts: \[
+                L_{r}(\hat{v};\lambda) = \int L_i(\theta_i; \lambda)
+                \hspace{0.5em}
+                f_r(\theta_i, \phi_i, \theta_e, \phi_e; \lambda)\hspace{0.5em}
+                max(0, \cos(\theta_i))\hspace{0.5em} d \theta_i \phi_i
+                \]
+            </p>
+            <p class="improc-description text-monospace text-wrap" style="width: 62em;">
+                Phong Shading Model: \(
+                I_{\lambda} = I_{a\lambda}k_a O_{d\lambda} +
+                f_{att}I_{p\lambda}[k_d O_{d\lambda} (\hat{N} \cdot \hat{L}) + k_s
+                (\hat{R} \cdot \hat{V})^n] \hspace{1em}
+                \hat{R} \cdot \hat{V} = (2\hat{N} (\hat{N} \cdot \hat{L}) -
+                \hat{L} ) \cdot \hat{V}
+                \)
             </p>
             <h4>Code snippets</h4>
             <div class="code-container">
-                <ul class="nav nav-tabs" id="3d-2d-projection-code-tab" role="tablist">
+                <ul class="nav nav-tabs" id="scattering-reflection-code-tab" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" id="3d-2d-projection-haskell-tab" data-toggle="tab" href="#3d-2d-projection-haskell" role="tab" aria-controls="3d-2d-projection-haskell" aria-selected="true">Haskell</a>
+                        <a class="nav-link active" id="scattering-reflection-haskell-tab" data-toggle="tab" href="#scattering-reflection-haskell" role="tab" aria-controls="scattering-reflection-haskell" aria-selected="true">Haskell</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="3d-2d-projection-python-tab" data-toggle="tab" href="#3d-2d-projection-python" role="tab" aria-controls="3d-2d-projection-python" aria-selected="false">Python</a>
+                        <a class="nav-link" id="scattering-reflection-python-tab" data-toggle="tab" href="#scattering-reflection-python" role="tab" aria-controls="scattering-reflection-python" aria-selected="false">Python</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="3d-2d-projection-cpp-tab" data-toggle="tab" href="#3d-2d-projection-cpp" role="tab" aria-controls="3d-2d-projection-cpp" aria-selected="false">Cpp</a>
+                        <a class="nav-link" id="scattering-reflection-cpp-tab" data-toggle="tab" href="#scattering-reflection-cpp" role="tab" aria-controls="scattering-reflection-cpp" aria-selected="false">Cpp</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="3d-2d-projection-nim-tab" data-toggle="tab" href="#3d-2d-projection-nim" role="tab" aria-controls="3d-2d-projection-nim" aria-selected="false">Nim</a>
+                        <a class="nav-link" id="scattering-reflection-nim-tab" data-toggle="tab" href="#scattering-reflection-nim" role="tab" aria-controls="scattering-reflection-nim" aria-selected="false">Nim</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="3d-2d-projection-red-tab" data-toggle="tab" href="#3d-2d-projection-red" role="tab" aria-controls="3d-2d-projection-red" aria-selected="false">Red</a>
+                        <a class="nav-link" id="scattering-reflection-red-tab" data-toggle="tab" href="#scattering-reflection-red" role="tab" aria-controls="scattering-reflection-red" aria-selected="false">Red</a>
                     </li>
                 </ul>
-                <div class="tab-content" id="3d-2d-projection-code-content">
-                    <div class="tab-pane fade show active" id="3d-2d-projection-haskell" role="tabpanel" aria-labelledby="3d-2d-projection-haskell-tab">
+                <div class="tab-content" id="scattering-reflection-code-content">
+                    <div class="tab-pane fade show active" id="scattering-reflection-haskell" role="tabpanel" aria-labelledby="scattering-reflection-haskell-tab">
                         <pre>
 <code class="language-haskell">
 </code>
-                        </pre>
+                    </pre>
                     </div>
-                    <div class="tab-pane fade" id="3d-2d-projection-python" role="tabpanel" aria-labelledby="3d-2d-projection-python-tab">
+                    <div class="tab-pane fade" id="scattering-reflection-python" role="tabpanel" aria-labelledby="scattering-reflection-python-tab">
                         <pre>
 <code class="language-python">
 </code>
-                        </pre>
+                    </pre>
                     </div>
-                    <div class="tab-pane fade" id="3d-2d-projection-cpp" role="tabpanel" aria-labelledby="3d-2d-projection-cpp-tab">
+                    <div class="tab-pane fade" id="scattering-reflection-cpp" role="tabpanel" aria-labelledby="scattering-reflection-cpp-tab">
                         <pre>
 <code class="language-cpp">
 </code>
-                        </pre>
+                    </pre>
                     </div>
-                    <div class="tab-pane fade" id="3d-2d-projection-nim" role="tabpanel" aria-labelledby="3d-2d-projection-nim-tab">
+                    <div class="tab-pane fade" id="scattering-reflection-nim" role="tabpanel" aria-labelledby="scattering-reflection-nim-tab">
                         <pre>
 <code class="language-nim">
 </code>
-                        </pre>
+                    </pre>
                     </div>
-                    <div class="tab-pane fade" id="3d-2d-projection-red" role="tabpanel" aria-labelledby="3d-2d-projection-red-tab">
+                    <div class="tab-pane fade" id="scattering-reflection-red" role="tabpanel" aria-labelledby="scattering-reflection-red-tab">
                         <pre>
 <code>
 </code>
-                        </pre>
+                    </pre>
                     </div>
                 </div>
             </div>
+            <div id="scattering-reflection-exercise" class="improc-exercise container-fluid">
+                <h4>Exercise</h4>
+                <ul>
+                    <li>
+                    </li>
+                </ul>
+            </div>
             <footer class="container-fluid">
                 <h4>References</h4>
-                <ul id="3d-2d-projection-references">
+                <ul id="scattering-reflection-references">
                     <li class="work-ref"><cite></cite></li>
                 </ul>
             </footer>

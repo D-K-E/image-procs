@@ -87,7 +87,8 @@
                     <div>
                         <dt>Description</dt>
                         <dd>
-                            Usually designated by the infix operator \(\times\) or \(\cdot\). It can be thought of as a repeated addition.
+                            Usually designated by the infix operator
+                            \(\times\). It can be thought of as a repeated addition.
                         </dd>
                     </div>
                     <div>
@@ -1509,7 +1510,10 @@ Spivak, Michael. Calculus. Houston, Tex.: Publish or Perish, 2008. https://archi
                                 <li>Slope intercept: \( 0 = mx - y + c \)</li>
                                 <li>With homogeneous coordinates: \( I \cdot \bar x
                                     \) where \(I = (a, b, c) \) and \(\bar x =
-                                (x, y, 1) \)</li>
+                                (x, y, 1) \). The \(\cdot\) represents here a
+                                dot product, see its implementation in
+                                <a href="#geometric-primitive-code-content">code</a>
+                                </li>
                             </ul>
                         </dd>
                     </div>
@@ -1753,6 +1757,13 @@ convert2DInHomoToHomo w (x, y) = (x * w, y * w, w)
 -- |'dot' dot product with 3d
 dot :: (Real, Real, Real) -&#62; (Real, Real, Real) -&#62; Real
 dot (x, y, z) (a, b, c) = x * a + y * b + z * c
+
+-- 'cross' product in 3d
+cross :: (Real, Real, Real) -&#62; (Real, Real, Real) -&#62; (Real, Real, Real)
+cross (p1x, p1y, p1z) (p2x, p2y, p2z) = 
+    (p1y * p2z - p1z * p2y,
+     p1z * p2x - p1x * p2z,
+     p1x * p2y - p1y * p2x)
 </code>
                                                            </pre>
                     </div>
@@ -1967,6 +1978,329 @@ dot: function [p1 p2] [
                             Szeliski, Richard. Computer Vision: Algorithms and
                             Applications. Texts in Computer Science. London:
                             Springer, 2011.
+                        </cite>
+                    </li>
+                </ul>
+            </footer>
+        </section>
+    </div>
+    <div class="container-fluid improc-container">
+        <section class="improc-section" id="3d-transformation">
+            <h3>3D Transformations</h3>
+            <div class="improc-summary container-fluid">
+                <h4>Problem Statement</h4>
+                <p id="3d-transformation-problem-statement" 
+                class="lead text-wrap text-monospace"
+                style="width: 50em;">
+                How do we do affine transformations on 3d objects and how do
+                we map them to 2d mediums ?
+                </p>
+            </div>
+            <h4>Description</h4>
+            <p class="improc-description text-monospace text-wrap"
+               style="width: 62em;">
+            We are going to cover basic 2d rigid body motion: rotation,
+            displacement, scaling, affine, and perspective.
+            <dl>
+                <div class="row">
+                    <dt class="col-md-3 col-sm">
+                        Translation/Displacement
+                    </dt>
+                    <dd class="col-md-9 col-sm">
+                        preserves orientation
+                           <ul>
+                                <li>\( \text{let} p \in R^3 \hspace{1em} p' = p + t
+                                    \)
+                                </li>
+                                <li>\(\text{let} \bar{p} \in P^3 \hspace{1em}
+                                    \pmatrix{
+                                    1 &#38; 0 &#38; 0 &#38; t_x \\
+                                    0 &#38; 1 &#38; 0 &#38; t_y \\
+                                    0 &#38; 0 &#38; 1 &#38; t_z \\
+                                    0 &#38; 0 &#38; 0 &#38; 1
+                                    } \cdot \bar{p}
+                                    \)
+                                </li>
+                            </ul>
+                        </dd>
+                    </div>
+                    <div class="row">
+                        <dt class="col-md-3 col-sm">
+                                Rotation with Euler Angles
+                        </dt>
+                        <dd class="col-md-9 col-sm">
+                        3D rotations can be done using several means we
+                        present here the one which depends on combination of
+                        Euler angles. It is easy to understand but has some
+                        drawbacks.
+                           <ul>
+                                <li>\(
+                                    \text{let} \hspace{1em} \bar{p} \in P^3 \hspace{1em}
+                                    \text{let} \hspace{1em} \alpha, \beta, \phi \hspace{1em}
+                                    \text{be angles of rotation over x, y, z axes}
+                                    \)\[
+                                    \pmatrix{
+                                    x' \\
+                                    y' \\
+                                    z' \\
+                                    1
+                                    } = \bar{p} \cdot \pmatrix{
+                                    1 &#38; 0 &#38; 0 &#38; 0 \\
+                                    0 &#38; \cos(\alpha) &#38; -\sin(\alpha) &#38; 0 \\
+                                    0 &#38; \sin(\alpha) &#38; \cos(\alpha) &#38; 0 \\
+                                    0 &#38; 0 &#38; 0 &#38; 1
+                                    } \cdot \pmatrix{
+                                    \cos(\beta) &#38; 0 &#38; \sin(\beta) &#38; 0 \\
+                                    0 &#38; 1 &#38; 0 &#38; 0 \\
+                                    -\sin(\beta) &#38; 0 &#38; \cos(\beta) &#38; 0 \\
+                                    0 &#38; 0 &#38; 0 &#38; 1
+                                    } \cdot \pmatrix{
+                                    \cos(\phi) &#38; -\sin(\phi) &#38; 0 &#38; 0 \\
+                                    \sin(\phi) &#38; \cos(\phi) &#38; 0 &#38; 0 \\
+                                    0 &#38; 0 &#38; 1 &#38; 0 \\
+                                    0 &#38; 0 &#38; 0 &#38; 1
+                                    }
+                                    \]
+                                </li>
+                            </ul>
+                        </dd>
+                    </div>
+                    <div class="row">
+                        <dt class="col-md-3 col-sm">
+                            Rotation with Rodriguez's formula
+                        </dt>
+                        <dd class="col-md-9 col-sm">
+                        \( \text{let} \hspace{1em} p = R^3 \hspace{1em} \theta 
+                        \hspace{1em} \text{be angle of rotation} \hspace{1em} 
+                        \hspace{1em} k \hspace{1em} \text{unit vector for rotation}
+                        \)
+                        \[ 
+                        p_{rot} = p \cos(\theta) + (k \times p) \sin(\theta) +
+                        k (k \cdot p)(1 - \cos(\theta))
+                        \]
+                        \( \times \) represents a cross product see its 
+                        implementation in 
+                        <a href="#geometric-primitive-code-content">code</a>.
+                        </dd>
+                    </div>
+                </dl>
+                Other affine transformations are structured in the same way as
+                in 2D using a 3x4 transformation matrix.
+            </p>
+            <h4>3D - 2D Projections</h4>
+            <h5>Camera/Screen</h5>
+            <p class="improc-description text-monospace text-wrap" style="width: 62em;">
+            The screen is your camera for looking at 3D objects. However, we
+            know that a car on screen does not have the same dimensions of a
+            real car. We can thus say that every object that is being viewed
+            using our screen/camera, is expressed not in its world
+            coordinates, but in its device coordinates. We call the coordinate
+            system in which we express the coordinates of objects on screen,
+            view space.
+            </p>
+            <p class="improc-description text-monospace text-wrap" style="width: 62em;">
+            There is an explicit relation between the world coordinate of an
+            object and the world coordinate of the camera. For example if a
+            car passes by behind the camera, it would not appear on the camera,
+            however if the car stops in front of the camera, the car would
+            then be seen by the camera. Hence there must a relation between
+            the position of objects that appear on the screen/camera and the
+            world coordinates of the two.
+            </p>
+            <h5>Camera Direction</h5>
+            <p class="improc-description text-monospace text-wrap" style="width: 62em;">
+            The first thing we would like to know is obviously whether the
+            object is visible or not on screen. Let's say you know the world
+            coordinate of camera and the world coordinate of an object and you
+            want to compute whether that object is visible by the camera or
+            not. In order to do this, we need to know where the camera is
+            pointing to, that is we need to know the camera direction.
+            This direction is expressed as \( 
+            axis_z = \hat{\overrightarrow{c_t - c_p}}
+                            \)
+                            where \(c_t\) is the camera target and \(c_p\) is the camera
+                            position. Notice that the camera target is expressed in world
+                            coordinates, but the result is normalized to unit vector.
+                            It simply represents the tip of the vector expressing
+                            the direction of the camera.
+            </p>
+            <h5>View Space</h5>
+            <p class="improc-description text-monospace text-wrap" style="width: 62em;">
+                Once we have this direction, we can compute the right and up axis
+                using the direction as the z axis in order to formulate the unit
+                vectors that make the view space. \(
+                axis_x = \hat{ \pmatrix{0 \\ 1 \\ 0} \times axis_z}
+                \hspace{1em} axis_y = axis_z \times axis_x
+                \). Then using these axis, we can transform any location on word
+                space to this view space by an affine transformation.
+                \[
+                \text{let} \hspace{1em} p \in R^3 \hspace{1em}
+                p' = \pmatrix{
+                \text{AxisX}_x &#38; \text{AxisX}_y &#38; \text{AxisX}_z &#38; 0 \\
+                \text{AxisY}_x &#38; \text{AxisY}_y &#38; \text{AxisY}_z &#38; 0 \\
+                \text{AxisZ}_x &#38; \text{AxisZ}_y &#38; \text{AxisZ}_z &#38; 0 \\
+                0 &#38; 0 &#38; 0 &#38; 1
+                } \cdot \pmatrix{
+                1 &#38; 0 &#38; 0 &#38; -p_x \\
+                0 &#38; 1 &#38; 0 &#38; -p_y \\
+                0 &#38; 0 &#38; 1 &#38; -p_z \\
+                0 &#38; 0 &#38; 1 &#38; 0
+                }
+                \]
+            </p>
+            <h5>Clip Space and Frustum</h5>
+            <p class="improc-description text-monospace text-wrap" style="width: 62em;">
+                We have transformed the object coordinates with respect to
+                those that of camera. But what is the criteria that shows
+                whether the object would show up at screen ? In order to
+                determine if an object shows up on camera, we transform view
+                space coordinates to clip space coordinates whose axes are
+                determined to a certain range. This is again an affine
+                transformation. This box that determines what is visible by
+                the camera and what is outside of its scope is called
+                <span class="text-info">frustum</span>.
+            </p>
+            <p class="improc-description text-monospace text-wrap" style="width: 62em;">
+                What happens can be represented with the following:
+                \( \text{let} \hspace{1em} p \in R^3 \hspace{1em}
+                \pmatrix{
+                x_clip \\
+                y_clip \\
+                z_clip \\
+                w_clip
+                } = \pmatrix{
+                \text{ViewSpace}_x \\
+                \text{ViewSpace}_y \\
+                \text{ViewSpace}_z \\
+                \text{ViewSpace}_w
+                } \cdot \text{Frustum}
+                \)
+                Then perspective projection is done with
+                \( p' = \pmatrix{
+                x_{clip} / w_{clip} \\
+                y_{clip} / w_{clip} \\
+                z_{clip} / w_{clip}
+                }
+                \).
+                Calculating frustum matrix is a little involved but it is
+                done using the following parameters:
+                <ul>
+                    <li>Field of view: The angle between two segments who pass
+                        through the corner of the far plane, the corner of the
+                        near plane and the camera point.
+                    </li>
+                    <li>Plane distance: The distance between far plane and the
+                        near plane</li>
+                    <li>Viewport size: The width and height of the window in
+                        which the rendering takes place.
+                    </li>
+                </ul>
+                Then we divide the clip space coordinate to the last component
+                of the newly obtained position vector, i.e. \(
+                \pmatrix{
+                x_{\text{clip}} / z_{\text{clip}} \\
+                y_{\text{clip}} / z_{\text{clip}} \\
+                }
+                \), and remap the resulting normalized coordinate to the viewport.
+            </p>
+            <h4>Code snippets</h4>
+            <div class="code-container">
+                <ul class="nav nav-tabs" id="3d-transformation-code-tab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="3d-transformation-haskell-tab" data-toggle="tab" href="#3d-transformation-haskell" role="tab" aria-controls="3d-transformation-haskell" aria-selected="true">Haskell</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="3d-transformation-python-tab" data-toggle="tab" href="#3d-transformation-python" role="tab" aria-controls="3d-transformation-python" aria-selected="false">Python</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="3d-transformation-cpp-tab" data-toggle="tab" href="#3d-transformation-cpp" role="tab" aria-controls="3d-transformation-cpp" aria-selected="false">Cpp</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="3d-transformation-nim-tab" data-toggle="tab" href="#3d-transformation-nim" role="tab" aria-controls="3d-transformation-nim" aria-selected="false">Nim</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="3d-transformation-red-tab" data-toggle="tab" href="#3d-transformation-red" role="tab" aria-controls="3d-transformation-red" aria-selected="false">Red</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="3d-transformation-code-content">
+                    <div class="tab-pane fade show active" id="3d-transformation-haskell" role="tabpanel" aria-labelledby="3d-transformation-haskell-tab">
+                        <pre>
+<code class="language-haskell">
+</code>
+                                                           </pre>
+                    </div>
+                    <div class="tab-pane fade" id="3d-transformation-python" role="tabpanel" aria-labelledby="3d-transformation-python-tab">
+                        <pre>
+<code class="language-python">
+</code>
+                                               </pre>
+                    </div>
+                    <div class="tab-pane fade" id="3d-transformation-cpp" role="tabpanel" aria-labelledby="3d-transformation-cpp-tab">
+                        <pre>
+<code class="language-cpp">
+</code>
+                        </pre>
+                    </div>
+                    <div class="tab-pane fade" id="3d-transformation-nim" role="tabpanel" aria-labelledby="3d-transformation-nim-tab">
+                        <pre>
+<code class="language-nim">
+</code>
+                        </pre>
+                    </div>
+                    <div class="tab-pane fade" id="3d-transformation-red" role="tabpanel" aria-labelledby="3d-transformation-red-tab">
+                        <pre>
+<code>
+</code>
+                        </pre>
+                    </div>
+                </div>
+            </div>
+            <div id="3d-transformation-exercise" class="improc-exercise container-fluid">
+                <h4>Exercise</h4>
+                <p class="improc-description text-monospace text-wrap" style="width: 62em;">
+                    Given the following viewport size: width: 800, height: 600
+                    and vertices:
+                    <pre>
+                        <code class="language-json">
+                        [{"x": 12 "y": 12, "z": 2},
+                         {"x": 25 "y": 12, "z": 2},
+                         {"x": 12 "y": 52, "z": 2},
+                         {"x": 25 "y": 52, "z": 2}
+                        ]
+                        </code>
+                    </pre>
+                    and the drawing order: [0, 1, 3, 2], and camera position:
+                    <code>{"x": 35, "y": 31, "z": 6}</code>
+                </p>
+                <ul>
+                    <li>Compute the direction vector of the camera pointing to
+                        the center of the rectangle
+                    </li>
+                    <li>Compute the view space coordinates of the rectangle
+                    </li>
+                    <li>Move rectangle 5 units in the direction
+                        <code>{"x": 0.55, "y": 0.37, "z": 0.74}</code>
+                        and draw it using perspective projection
+                    </li>
+                    <li>Rotate rectangle by 55 degrees towards the direction
+                        <code>{"x": 0.55, "y": 0.37, "z": 0.74}</code>
+                        and draw it using perspective projection
+                    </li>
+                </ul>
+            </div>
+            <footer class="container-fluid">
+                <h4>References</h4>
+                <ul id="3d-transformation-references">
+                    <li class="work-ref">
+                        <cite>
+                            Szeliski, Richard. Computer Vision: Algorithms and
+                            Applications. Texts in Computer Science. London:
+                            Springer, 2011.
+                        </cite>
+                    </li>
+                    <li class="work-ref">
+                        <cite>
+                            Learn OpenGL's <a>section</a> on coordinate systems
                         </cite>
                     </li>
                 </ul>
