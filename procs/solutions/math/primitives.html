@@ -38,12 +38,27 @@
             <div class="tab-pane fade" id="calculus-python" role="tabpanel" aria-labelledby="calculus-python-tab">
                 <pre>
 <code class="language-python">
-
+# common to all
 def make_canvas(width: int, height: int):
     canvas = [[0 for w in range(width)] for h in range(h)]
     return canvas
 
 def place_rect_on_canvas(width: int, height: int,
+    topLeft: (int, int), canvas):
+    w, h = topLeft
+    wfin = w + width # col fin
+    hfin = h + height # row fin
+    for r in range(len(canvas)):
+        if r == hfin or r == h:
+            for c in range(len(row)):
+                if c &le; wfin and c &ge; w:
+                    canvas[r][c] = 1
+        elif r &le; hfin and r &ge; h:
+            canvas[r][w] = 1
+            canvas[r][wfin] = 1
+
+# Answer 1
+def fill_rect_on_canvas(width: int, height: int,
     topLeft: (int, int), canvas):
     ""
     w, h = topLeft
@@ -80,42 +95,6 @@ def canvas_to_string(canvas):
             <div class="tab-pane fade" id="calculus-cpp" role="tabpanel" aria-labelledby="calculus-cpp-tab">
                 <pre>
 <code class="language-cpp">
-float f(float arg);
-
-float der(float x, float h)
-{
-    float v1 = f(x+h);
-    float v2 = f(x);
-    return (v1 - v2) / h;
-}
-float integ(std::vector<float> args, float stepsize)
-{
-    float counter = 0;
-    for (int i=0; i < vector.size(); i++)
-      {
-        counter += f(vector[i]) * stepsize;
-      }
-    return counter;
-}
-</code>
-                                               </pre>
-            </div>
-            <div class="tab-pane fade" id="calculus-nim" role="tabpanel" aria-labelledby="calculus-nim-tab">
-                <pre>
-<code class="language-nim">
-proc f(arg: float): float
-
-proc der(x: float, h: float): float =
-    let v1 = f(x+h)
-    let v2 = f(x)
-    return (v1 - v2) / h
-
-proc integ(args: seq[float], step: float): float =
-    var counter = 0
-    for a in args:
-        v = f(a) * step
-        counter += v
-    return counter
 
 </code>
                                                </pre>
@@ -123,23 +102,7 @@ proc integ(args: seq[float], step: float): float =
             <div class="tab-pane fade" id="calculus-red" role="tabpanel" aria-labelledby="calculus-red-tab">
                 <pre>
 <code>
-f: function [a] [return a]
-der: function[f x h] [
-    v1: f [x+h]
-    v2: f [x]
-    res: v1-v2
-    return res / h
-]
-;; answer 1
-f1: function [x] [return x + 3]
-f2: function [x] [return x / 8]
-c1: function [x] [return [f1 x] + [f2 x]] 
-sumCheck: function [x] [
-    derc: der [c1 x 0.1] 
-    derf1: der [f1 x 0.1] 
-    derf2: der [f2 x 0.1] 
-    return derc == [derf1 + derf2]
-]
+
 </code>
                                                </pre>
             </div>
@@ -150,22 +113,31 @@ sumCheck: function [x] [
         <li>
             <div id="answer-1" class="container-fluid">
                 <p>
-                    Write small programs to test the rules of
-                    differentiation. Did you notice anything strange ?
-                </p>
+                    Fill two rectangles with star *. Rectangle width: 70
+                    height: 3. First rectangle top left corner (x: 0, y: 0).
+                    Second rectangle top left corner (x: 0, y: 20). Save
+                    the file.
 
+                </p>
             </div>
         </li>
         <li>
             <div id="answer-2" class="container-fluid">
                 <p>
-                    Write a program to compute the area of a triangle
-                    using integral function defined above. Triangle area
-                    is b x h x 1/2. b is base side, h, height that is
-                    perpendicular to base.
-
+                    Draw a triangle using * to canvas whose vertices are:
+                    (5, 10), (3, 16), (8, 13). Hint, parametric
+                    representation of 2d lines.
                 </p>
 
+            </div>
+        </li>
+        <li>
+            <div id="answer-3" class="container-fluid">
+                <p>
+                    Draw a triangle using * to canvas whose vertices are:
+                    (5, 10), (3, 16), (8, 13). Hint, parametric
+                    representation of 2d lines.
+                </p>
             </div>
         </li>
 
