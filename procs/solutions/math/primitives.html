@@ -43,6 +43,16 @@ def make_canvas(width: int, height: int):
     canvas = [[0 for w in range(width)] for h in range(h)]
     return canvas
 
+import math
+
+# normaliz a vector
+def normalize(v: (int, int)):
+    #
+    vx2 = v[0] ** 2
+    vy2 = v[1] ** 2
+    vr = math.sqrt(vx2 + vy2)
+    return (v[0] / vr, v[1] / vr)
+
 def place_rect_on_canvas(width: int, height: int,
     topLeft: (int, int), canvas):
     w, h = topLeft
@@ -71,6 +81,176 @@ def fill_rect_on_canvas(width: int, height: int,
                 if c &le; wfin and c &ge; w:
                     canvas[r][c] = 1
     return canvas
+
+# generic line drawing
+def draw_line_generic(v1, v2):
+    x1, y1 = v1
+    x2, y2 = v2
+    deltax = x1 - x2
+    deltay = y1 - y2
+
+    xaxis_dir = 1
+    if deltax &#62; 0:
+        xaxis_dir = 1
+    else:
+        xaxis_dir = -1
+
+    yaxis_dir = 1
+    if deltay &#62; 0:
+        yaxis_dir = 1
+    else:
+        yaxis_dir = -1
+
+    deltax = abs(deltax)
+    deltay = abs(deltay)
+
+    if deltax &#62; deltay:
+        p1x, p1y, p2x, p2y = xaxis_dir, 0, 0, yaxis_dir
+    else:
+        deltax, deltay = deltay, deltax
+        p1x, p1y, p2x, p2y = 0, yaxis_dir, xaxis_dir, 0
+
+    err = 2 * deltay - deltax
+    yval = 0
+    coords = []
+    for x in range(deltax + 1):
+        xcoord = x1 + x*p1x + yval * p2x
+        ycoord = y1 + x*p1y + yval * p2y
+        coords.append([xcoord, ycoord])
+        if err &#62;= 0:
+            yval += 1
+            err = err - 2 * deltax
+        err += 2 * deltay
+    return coords
+
+
+# Answer 2
+
+# line v2 to v1:
+# 10 = 5m + c
+# 16 = 3m + c
+# 6 = -2m
+# m = -3
+# c = 25
+
+# line v2 to v3:
+# 16 = 3m + c
+# 13 = 8m + c
+# -3 = 5m
+# m = -3 / 5
+# c = 16 + 3/5
+
+# line v3 to v1:
+# 10 = 5m + c
+# 13 = 8m + c
+# 3 = 3m
+# m = 1
+# c = 5
+
+def draw_line(v1, v2, lineq: lambda, coords):
+    #
+    for x in range(v1[0], v2[0]+1):
+        y = lineq(x)
+        coords.append([x, y])
+    return coords
+
+def draw_triangle_on_canvas(v1=(5, 10),
+    v2=(3, 16), v3=(8, 13), canvas):
+    # line v1
+    #
+    def lineq1(x): return -3 * x + 25
+    def lineq2(x): return round((-3 / 5) * x + (16 * 3/5))
+    def lineq3(x): return x + 5
+    coords = []
+    draw_line(v2, v1, lineq1, coords)
+    draw_line(v2, v3, lineq2, coords)
+    draw_line(v1, v3, lineq3, coords)
+    for coord in coords:
+        x, y = coord
+        canvas[x][y] = 1
+    return canvas
+
+# Answer 3
+def find_drawable(row):
+    indices = []
+    for i in range(len(row)):
+        if row[i] == 1:
+            indices.append(i)
+    return indices
+
+def fill_triangle_on_canvas(v1=(5, 10),
+    v2=(3, 16), v3=(8, 13), canvas):
+    canvas_triangle = draw_triangle_on_canvas(v1, v2, v3, canvas)
+    for r, row in enumerate(canvas_triangle):
+        indices = find_drawable(row)
+        if indices:
+            for col in range(indices[0], indices[-1]):
+                canvas_triangle[r][col] = 1
+    return canvas_triangle
+
+# Answer 4
+def new_tip(v1, v2, factor):
+    vec1diff = (v1[0] - v2[0], v1[1] - v2[1])
+    vec1diff = (vec1diff[0] * factor, vec1diff[1] * factor)
+    return (v2[0] + vec1diff[0], v2[1] + vec1diff[1])
+
+    
+def scale_triangle(v1=(5, 10), factor=2,
+    v2=(3, 16), v3=(8, 13), canvas):
+    #
+    newv1 = new_tip(v1, v2, factor)
+    newv2 = new_tip(v3, v2, factor)
+    newv3 = new_tip(v1, v3, factor)
+    return draw_triangle_on_canvas(newv1, newv2, newv3, canvas)
+
+# Answer 5
+def matmul(mat1, mat2):
+    # create result matrix
+    res = [[0 for i in mat2[0]] for k in mat1]
+    rowM1 = len(mat1)
+    colM1 = len(mat1[0])
+    rowM2 = len(mat2)
+    colM2 = len(mat2[0])
+    for i in range(rowM1):
+        for j in range(colM2):
+            for p in range(colM1):
+                res[i][j] += mat1[i][p] * mat2[p][j]
+    return res
+
+def mat2vec(mat, vec):
+    ""
+    res = [[0 for i in vec] for k in mat]
+    rowM = len(mat)
+    colM = len(mat[0])
+    veclen = len(vec)
+    for i in range(rowM):
+        for j in range(veclen):
+            for p in range(colM):
+                res[i][j] += mat[i][p] * vec[j]
+    return res
+
+
+def rotate_vert(v, angle):
+    rad = math.radians(angle)
+    mat = [[math.cos(rad), - math.sin(rad), 0],
+        [math.sin(rad), - math.cos(rad), 0],
+        [0, 0, 1]]
+    augmented_vec = [v[0], v[1], 1]
+    return mat2vec(mat, v)
+
+def rotate_triangle(v1=(5, 10), factor=2,
+    v2=(3, 16), v3=(8, 13), angle, canvas):
+    v1r = rotate_vert(v1, angle)
+    v2r = rotate_vert(v2, angle)
+    v3r = rotate_vert(v3, angle)
+    line1c = draw_line_generic(v1r, v2r)
+    line2c = draw_line_generic(v2r, v3r)
+    line3c = draw_line_generic(v3r, v1r)
+    for coord in line1c + line2c + line3c:
+        x, y = coord
+        canvas[x][y] = 1
+    return canvas
+
 
 def row_to_str(row: list):
     rstr = ""
@@ -134,12 +314,30 @@ def canvas_to_string(canvas):
         <li>
             <div id="answer-3" class="container-fluid">
                 <p>
-                    Draw a triangle using * to canvas whose vertices are:
-                    (5, 10), (3, 16), (8, 13). Hint, parametric
+                    Fill the triangle using * to canvas whose vertices are:
+                    (5, 10), (3, 16), (8, 13). Hint, slope intercept
                     representation of 2d lines.
                 </p>
             </div>
         </li>
+        <li>
+            <div id="answer-4" class="container-fluid">
+                <p>
+                    Scale the size of the triangle with the vertices
+                    mentioned above by 2
+                </p>
+            </div>
+        </li>
+        <li>
+            <div id="answer-5" class="container-fluid">
+                <p>
+                    Rotate the triangle 45 degrees.
+                </p>
+            </div>
+        </li>
+
+
+
 
     </ol>
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">
