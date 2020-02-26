@@ -10,7 +10,7 @@
 <article>
     <section class="toc" id="processing-toc">
         <ul>
-            <li><a href="#"></a></li>
+            <li><a href="#point-operators">Point Operators</a></li>
             <li><a href="#"></a></li>
             <li><a href="#"></a></li>
             <li><a href="#"></a></li>
@@ -18,85 +18,184 @@
         </ul>
     </section>
     <div class="container-fluid improc-container">
-        <section class="improc-section" id="3d-2d-transform">
-            <h3>3D - 2D Transformations</h3>
+        <section class="improc-section" id="point-operatos">
+            <h3>Point Operators</h3>
             <div class="improc-summary container-fluid">
                 <h4>Problem Statement</h4>
-                <p id="3d-2d-transform-problem-statement" class="lead">
-                    Human visual system perceives the world in 3 dimensions,
-                    whereas computer screens are 2 dimensional media. How do we
-                    then represent 3d objects in computer screen ?
+                <p id="point-operatos-problem-statement" class="lead text-wrap text-monospace" style="width: 50em;">
+                    Each output pixel value is dependent only on the input pixel
+                    value plus the parameters of the operator.
                 </p>
             </div>
             <h4>Description</h4>
-            <p class="improc-description">Algorithm description</p>
+            <p class="improc-description text-monospace text-wrap" style="width: 62em;">
+                Most basic point operators are those that deal with contrast
+                and brightness. These can be described as linear operators
+                thus as \( f(x) = ag(x) + b \) We can also vary these parameters spatially:
+                Here is a list of operators you can use for transform pixel
+                values, x denotes pixel location in the image matrix: \(x = [i, j]\)
+                in all of the transformations:
+                <dl>
+                    <div>
+                        <dt>Global Contrast and Brightness Transform</dt>
+                        <dd>
+                            \(f(x) = ag(x) + b\) where a, and b are called
+                            contrast and brightness parameters respectively,
+                            and g(x) is the function resulting with
+                            pixel value at the given location.
+                        </dd>
+                    </div>
+                    <div>
+                        <dt>Spatially Varying Contrast and Brightness
+                            Transform</dt>
+                        <dd>
+                            \( f(x) = a(x)g(x) + b(x) \)
+                        </dd>
+                    </div>
+                    <div>
+                        <dt>Linear Blend with 2 Images</dt>
+                        <dd>\(f(x) = (1 - \alpha)g_0(x) + \alpha g_1(x) \)</dd>
+                    </div>
+                    <div>
+                        <dt>Linear Blend with N Images</dt>
+                        <dd>\(f(x) = \alpha_0 g_0(x) + \alpha_1 g_1(x) + ...
+                            \alpha_n g_n(x) \) where \(\alpha_0 + \alpha_1 + ... +
+                            \alpha_n = 1\)</dd>
+                    </div>
+                    <div>
+                        <dt>Inverse Gamma Correction</dt>
+                        <dd>\(f(x) = (g(x))^{\frac{1}{\gamma}}\) where
+                            \(\gamma\) can be a value around 2.2</dd>
+                    </div>
+                    <div>
+                        <dt>Histogram Equalization</dt>
+                        <dd>See Exercises</dd>
+                    </div>
+                </dl>
+            </p>
             <h4>Code snippets</h4>
             <div class="code-container">
-                <ul class="nav nav-tabs" id="3d-2d-transform-code-tab" role="tablist">
+                <ul class="nav nav-tabs" id="point-operatos-code-tab" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" id="3d-2d-transform-haskell-tab" data-toggle="tab" href="#3d-2d-transform-haskell" role="tab" aria-controls="3d-2d-transform-haskell" aria-selected="true">Haskell</a>
+                        <a class="nav-link active" id="point-operatos-haskell-tab" data-toggle="tab" href="#point-operatos-haskell" role="tab" aria-controls="point-operatos-haskell" aria-selected="true">Haskell</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="3d-2d-transform-python-tab" data-toggle="tab" href="#3d-2d-transform-python" role="tab" aria-controls="3d-2d-transform-python" aria-selected="false">Python</a>
+                        <a class="nav-link" id="point-operatos-python-tab" data-toggle="tab" href="#point-operatos-python" role="tab" aria-controls="point-operatos-python" aria-selected="false">Python</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="3d-2d-transform-cpp-tab" data-toggle="tab" href="#3d-2d-transform-cpp" role="tab" aria-controls="3d-2d-transform-cpp" aria-selected="false">Cpp</a>
+                        <a class="nav-link" id="point-operatos-cpp-tab" data-toggle="tab" href="#point-operatos-cpp" role="tab" aria-controls="point-operatos-cpp" aria-selected="false">Cpp</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="3d-2d-transform-nim-tab" data-toggle="tab" href="#3d-2d-transform-nim" role="tab" aria-controls="3d-2d-transform-nim" aria-selected="false">Nim</a>
+                        <a class="nav-link" id="point-operatos-nim-tab" data-toggle="tab" href="#point-operatos-nim" role="tab" aria-controls="point-operatos-nim" aria-selected="false">Nim</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="3d-2d-transform-red-tab" data-toggle="tab" href="#3d-2d-transform-red" role="tab" aria-controls="3d-2d-transform-red" aria-selected="false">Red</a>
+                        <a class="nav-link" id="point-operatos-red-tab" data-toggle="tab" href="#point-operatos-red" role="tab" aria-controls="point-operatos-red" aria-selected="false">Red</a>
                     </li>
                 </ul>
-                <div class="tab-content" id="3d-2d-transform-code-content">
-                    <div class="tab-pane fade show active" id="3d-2d-transform-haskell" role="tabpanel" aria-labelledby="3d-2d-transform-haskell-tab">
+                <div class="tab-content" id="point-operatos-code-content">
+                    <div class="tab-pane fade show active" id="point-operatos-haskell" role="tabpanel" aria-labelledby="point-operatos-haskell-tab">
                         <pre>
 <code class="language-haskell">
 </code>
-                                                           </pre>
+                                                       </pre>
                     </div>
-                    <div class="tab-pane fade" id="3d-2d-transform-python" role="tabpanel" aria-labelledby="3d-2d-transform-python-tab">
+                    <div class="tab-pane fade" id="point-operatos-python" role="tabpanel" aria-labelledby="point-operatos-python-tab">
                         <pre>
 <code class="language-python">
 </code>
-                                               </pre>
+                                           </pre>
                     </div>
-                    <div class="tab-pane fade" id="3d-2d-transform-cpp" role="tabpanel" aria-labelledby="3d-2d-transform-cpp-tab">
+                    <div class="tab-pane fade" id="point-operatos-cpp" role="tabpanel" aria-labelledby="point-operatos-cpp-tab">
                         <pre>
 <code class="language-cpp">
 </code>
-                                               </pre>
+                                           </pre>
                     </div>
-                    <div class="tab-pane fade" id="3d-2d-transform-nim" role="tabpanel" aria-labelledby="3d-2d-transform-nim-tab">
+                    <div class="tab-pane fade" id="point-operatos-nim" role="tabpanel" aria-labelledby="point-operatos-nim-tab">
                         <pre>
 <code class="language-nim">
 </code>
-                                               </pre>
+                                           </pre>
                     </div>
-                    <div class="tab-pane fade" id="3d-2d-transform-red" role="tabpanel" aria-labelledby="3d-2d-transform-red-tab">
+                    <div class="tab-pane fade" id="point-operatos-red" role="tabpanel" aria-labelledby="point-operatos-red-tab">
                         <pre>
 <code>
 </code>
-                                               </pre>
+                                           </pre>
                     </div>
                 </div>
             </div>
+            <div id="point-operatos-exercise" class="improc-exercise container-fluid">
+                <h4>Exercise</h4>
+                <ul>
+                    <li>
+                        Sample Image 1:
+                        <img src="https://cdn.allwallpaper.in/wallpapers/640x480/10970/animals-bears-640x480-wallpaper.jpg" width="640" height="480" alt="bear image" />
+                    </li>
+                    <li>
+                        Sample Image 2:
+                        <img src="https://cdn.wallpapersafari.com/87/31/s19Vaz.jpg" width="640" height="480" alt="cloudy landscape image" />
+                    </li>
+                    <li>
+                        Sample Image 3:
+                        <img src="https://www.bingwallpaperhd.com/wp-content/uploads/2019/06/LandscapeLiRiver-640x480.jpg" width="640" height="480" alt="montains landscape image" />
+                    </li>
+
+                </ul>
+                <p class="improc-description text-monospace text-wrap" style="width: 62em;">
+                    In the following exercises, you may use a library of your
+                    choice to read image as a color matrix. But you may not
+                    use any other functionality from libraries.
+                </p>
+                <ul>
+                    <li>Write a program to apply global contrast and
+                        brightness transform to sample images.
+                    </li>
+                    <li>Write a program to apply spatially varying contrast and
+                        brightness transform to sample images.
+                    </li>
+                    <li>
+                        Blend sample image 1 with sample image 2. Alpha value
+                        is 0.3
+                    </li>
+                    <li>
+                        Blend all sample images together. The alpha values
+                        are: 0.6, 0.2, 0.2
+                    </li>
+                    <li>Implement Histogram Equalization. The formula for
+                        histogram equalization on 8bit images is the following:
+                        \( f(j) = \frac{255}{T} \sum_{i=0}^j N_i \)
+                        The terms of the formula are the following:
+                        <ul>
+                            <li>T is the total number of pixels in the image.
+                            </li>
+                            <li>j is the gray level, a number between [0,
+                                255].
+                            </li>
+                            <li>\( N_i \) is the number of pixels at gray
+                                level i</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
             <footer class="container-fluid">
                 <h4>References</h4>
-                <ul id="3d-2d-transform-references">
+                <ul id="point-operatos-references">
                     <li class="work-ref"><cite></cite></li>
                 </ul>
             </footer>
         </section>
     </div>
-    <script src="https://myCDN.com/prism@v1.x/components/prism-core.min.js">
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">
     </script>
-    <script src="https://myCDN.com/prism@v1.x/plugins/autoloader/prism-autoloader.min.js">
-    </script>
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="../theme/js/prism.js">
+    </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
 </article>
 
 </html>

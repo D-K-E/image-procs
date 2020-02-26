@@ -11,10 +11,6 @@
     <section class="toc" id="processing-toc">
         <ul>
             <li><a href="#scattering-reflection">Scattering</a></li>
-            <li><a href="#"></a></li>
-            <li><a href="#"></a></li>
-            <li><a href="#"></a></li>
-
         </ul>
     </section>
     <div class="container-fluid improc-container">
@@ -52,6 +48,12 @@
                 f_r(\theta_i, \phi_i, \theta_e, \phi_e; \lambda)\hspace{0.5em}
                 max(0, \cos(\theta_i))\hspace{0.5em} d \theta_i \phi_i
                 \]
+
+                Though this equation is particularly important for rendering a
+                scene, its explanation is beyond the scope of the course of
+                this year. It might be treated in the following years. However
+                here is a <a href="https://en.wikipedia.org/wiki/Rendering_equation">link</a>
+                that explains how rendering equation works.
             </p>
             <p class="improc-description text-monospace text-wrap" style="width: 62em;">
                 Phong Shading Model: \[
@@ -72,42 +74,42 @@
                 <dl>
                     <div>
                         <dt>\(I_{\lambda}\)</dt>
-                        <dl>
+                        <dd>
                             Light intensity for channel \(\lambda\). In
                             practice this is the value for one of your color
                             channels R,G, or B. In most cases it is a
                             normalized value between 0 and 1.0, we interpolate
-                            it to a value between 0 255.
-                        </dl>
+                            it to a value between 0 and 255.
+                        </dd>
                     </div>
                     <div>
                         <dt>\(I_{a\lambda}\)</dt>
-                        <dl>
+                        <dd>
                             Ambient light intensity for the channel
                             \(\lambda\). The amount of light in the
                             environment.
-                        </dl>
+                        </dd>
                     </div>
                     <div>
                         <dt>\(k_a\)</dt>
-                        <dl>
+                        <dd>
                             Ambient light coefficient. This help us to control
                             how much the ambient light should effect the
                             overall color of the object.
-                        </dl>
+                        </dd>
                     </div>
                     <div>
                         <dt>\(O_{d\lambda}\)</dt>
-                        <dl>
+                        <dd>
                             Object diffuse coefficient. It is a material
                             property of the object. It models how much the
                             object reacts to the wavelength \(\lambda\) of the
                             light.
-                        </dl>
+                        </dd>
                     </div>
                     <div>
-                        <dt>f_{att}</dt>
-                        <dl>
+                        <dt>\(f_{att}\)</dt>
+                        <dd>
                             Attenuation value. Since light reduces its
                             intensity as it travels from its caster to the
                             material that scatters it. If this would not be
@@ -119,15 +121,81 @@
                             as an intensity change, that intensity change help
                             us to distinguish the objects. In most cases it is
                             calculated as follows: \(
-                            f_att = \frac{1}{a_c + a_l * d + a_q * d^2} \)
+                            f_att = \frac{1}{a_c + a_l * d + a_q * d^2}
+                            \)
                             where \(a_c\) is constant factor, \(a_l\) is
-                            linear factor, \(a_q\) is quadratic factor.
-                        </dl>
+                            linear factor, \(a_q\) is quadratic factor. These
+                            are arbitrary factors. Constant factor is mostly
+                            1.0. Linear and quadratic change with respect to
+                            distance.
+                        </dd>
                     </div>
-
+                    <div>
+                        <dt>
+                            \( I_{p\lambda} \)
+                        </dt>
+                        <dd>
+                            Diffuse intensity of light. This is mostly
+                            used for incoming ray intensity. For example 1.0
+                            for the channel \(\lambda\) which is a place
+                            holder for R, G, B.
+                        </dd>
+                    </div>
+                    <div>
+                        <dt>N</dt>
+                        <dd>
+                            Surface normal.
+                        </dd>
+                    </div>
+                    <div>
+                        <dt>L</dt>
+                        <dd>
+                            Direction of incoming light
+                        </dd>
+                    </div>
+                    <div>
+                        <dt>\(k_s\)</dt>
+                        <dd>
+                            Specular coefficient. It permits us to control how
+                            much specular radiance of the object. This is
+                            actually a material property.
+                        </dd>
+                    </div>
+                    <div>
+                        <dt>\(\hat{R}\)</dt>
+                        <dd>
+                            Reflection vector. Direction to which light is
+                            reflected from the surface. Normalized.
+                        </dd>
+                    </div>
+                    <div>
+                        <dt>\(\hat{V}\)</dt>
+                        <dd>
+                            Viewer vector. Direction in which the viewer is
+                            located. Normalized.
+                        </dd>
+                    </div>
+                    <div>
+                        <dt>n</dt>
+                        <dd>
+                            Specular reflection exponent coefficient.
+                            Another material property. This also help us to
+                            control specularity.
+                        </dd>
+                    </div>
                 </dl>
             </p>
             <p class="improc-description text-monospace text-wrap" style="width: 62em;">
+                Phong shading model is superseded by microfacet based models but
+                still for quick experiments it gives acceptable results, and
+                it is easy to evaluate. The final color, final appearance, is
+                composed of three elements: ambient, diffuse, specular. These
+                components are controlled via coefficients. These coefficients
+                are based on the material properties of the objects. However
+                the problem with Phong model is that the contribution of the
+                material properties is modeled in rather arbitrary fashion.
+                Thus, it is difficult to explain why some value works for
+                modeling the behavior of an object.
             </p>
             <h4>Code snippets</h4>
             <div class="code-container">
@@ -185,24 +253,66 @@
                 <h4>Exercise</h4>
                 <ul>
                     <li>
+                        Implement and test Phong model on scene. The scene
+                        contains the following:
+                        <ul>
+                            <li>Rectangle whose vertices are:
+                                <ul>
+                                    <li>[0.0, 5.0, 0.0]</li>
+                                    <li>[0.0, 1.0, 0.0]</li>
+                                    <li>[8.0, 1.0, 0.0]</li>
+                                    <li>[8.0, 5.0, 0.0]</li>
+                                </ul>
+                            </li>
+                            <li>The color matrix of the rectangle is
+                                \pmatrix{
+                                10 &#38; 120 &#38; 120 &#38; 120 &#38; 86 &#38; 132 &#38; 200 &#38; 250 \\
+                                100 &#38; 10 &#38; 10 &#38; 10 &#38; 8 &#38; 12 &#38; 200 &#38; 250 \\
+                                120 &#38; 10 &#38; 130 &#38; 130 &#38; 132 &#38; 32 &#38; 100 &#38; 150 \\
+                                150 &#38; 180 &#38; 220 &#38; 220 &#38; 159 &#38; 136 &#38; 250 &#38; 250
+                                }
+                            </li>
+                            <li>
+                                Light source who is positioned at [4.0, 20.0,
+                                4.0] and whose diffuse intensity is 255.
+                            </li>
+                            <li>Viewer who is positioned at [8.0, 12.0, 6.0]</li>
+                            <li>Attenuation factor values are 1.0, 0.7, 1.8</li>
+                            <li>Ambient intensity is 1.0</li>
+                            <li>The values for \(k_a,k_s\) are arbitrary values between 0
+                                and 1
+                            </li>
+                            <li>The value for n can be anything between 1
+                                and 800</li>
+                        </ul>
                     </li>
                 </ul>
             </div>
             <footer class="container-fluid">
                 <h4>References</h4>
                 <ul id="scattering-reflection-references">
-                    <li class="work-ref"><cite></cite></li>
+                    <li class="work-ref"><cite>
+                            Foley, James, Andries van Dam, Steven Feiner, John Hughes, David Skalar, Kurt Akeley, and Morgan McGuire. Computer Graphics: Principles and Practice. 3rd ed. Paris, 2013.
+                        </cite></li>
+                    <li class="work-ref">
+                        <cite>
+                            Szeliski, Richard. Computer Vision: Algorithms and Applications. Texts in Computer Science. London: Springer, 2011.
+                        </cite>
+                    </li>
                 </ul>
             </footer>
         </section>
     </div>
-    <script src="../theme/js/prism.js">
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">
     </script>
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="../theme/js/prism.js">
+    </script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
 </article>
 
 </html>
