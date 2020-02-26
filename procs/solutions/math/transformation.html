@@ -1,0 +1,185 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+    <title>Image Formation Solutions</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="../../theme/css/prism.css" />
+</head>
+
+<body class="container-fluid">
+    <div class="code-container">
+        <ul class="nav nav-tabs" id="calculus-code-tab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="calculus-haskell-tab" data-toggle="tab" href="#calculus-haskell" role="tab" aria-controls="calculus-haskell" aria-selected="true">Haskell</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="calculus-python-tab" data-toggle="tab" href="#calculus-python" role="tab" aria-controls="calculus-python" aria-selected="false">Python</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="calculus-cpp-tab" data-toggle="tab" href="#calculus-cpp" role="tab" aria-controls="calculus-cpp" aria-selected="false">Cpp</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="calculus-nim-tab" data-toggle="tab" href="#calculus-nim" role="tab" aria-controls="calculus-nim" aria-selected="false">Nim</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="calculus-red-tab" data-toggle="tab" href="#calculus-red" role="tab" aria-controls="calculus-red" aria-selected="false">Red</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="calculus-code-content">
+            <div class="tab-pane fade show active" id="calculus-haskell" role="tabpanel" aria-labelledby="calculus-haskell-tab">
+                <pre>
+<code class="language-haskell">
+
+import Data.Matrix
+
+-- rectCenter takes topleft coordinate, width, height
+rectCenter :: (Float, Float, Float) -&#62; Float -&#62; Float -&#62; (Float,
+Float, Float)
+rectCenter (x, y, z) width, height =
+    (x+width/2, y+height/2, z)
+
+normVec :: (Float, Float, Float) -&#62; (Float, Float, Float)
+normVec (x, y, z) = let n = sqrt (x*x + y*y + z*z)
+                    in (x/n, y/n, z/n)
+
+-- Answer 1
+-- cameraDir takes position and target as arguments
+cameraDir :: (Float, Float, Float) -&#62; (Float, Float, Float) -&#62; (Float,
+Float, Float)
+
+cameraDir (xp, yp, zp) (xt, yt, zt) = 
+    normVec (xt-xp, yt-yp, zt - zp)
+
+-- Answer 2
+-- cameraSpaceXAxis takes camera direction as argument
+cameraSpaceXAxis :: (Float, Float, Float) -&#62; (Float, Float, Float)
+cameraSpaceXAxis cameraDir =
+    cross (0, 1, 0) cameraDir
+-- for implementation of cross see math notes
+
+cameraSpaceYAxis :: (Float, Float, Float) -&#62; (Float, Float, Float) -&#62;
+(Float, Float, Float)
+
+cameraSpaceYAxis cameraDir xaxis = 
+    cross cameraDir xaxis
+
+-- computeViewSpace takes xaxis, yaxis, zaxis and a position as arguments
+computeViewSpace :: (Float, Float, Float) -&#62; (Float, Float, Float) -&#62;
+(Float, Float, Float) -&#62; (Float, Float, Float) -&#62; (Float, Float,
+Float)
+
+computeViewSpace (xx, yx, zx) (xy, yy, zy) (xz, yz, zz) (px, py, pz) =
+    multStd (fromList [[xx, yx, zx, 0], 
+              [xy, yy, zy, 0],
+              [xz, yz, zz, 0],
+              [0, 0, 0, 1]]) (
+                fromList [
+                    [1, 0, 0, -px],
+                    [0, 1, 0, -py], 
+                    [0, 0, 1, -pz], 
+                    [0, 0, 0, 1]
+                    ]
+                )
+
+
+-- Answer 3
+
+</code>
+                                                           </pre>
+            </div>
+            <div class="tab-pane fade" id="calculus-python" role="tabpanel" aria-labelledby="calculus-python-tab">
+                <pre>
+<code class="language-python">
+import math
+
+def rectCenter(topleft: (float, float, float), width: float, height: float):
+    return (topleft[0]+width/2, topleft[1]+height/2, topleft[2]) 
+
+def normVec(x,y,z):
+    norm = math.sqrt(x*x + y*y + z*z)
+    return (x/norm, y/norm, z/norm)
+
+def cameraDir(pos, target):
+    return normVec(*(target[0] - pos[0],
+                    target[1] - pos[1],
+                    target[2] - pos[2]))
+
+def cameraSpaceXAxis(dir):
+    return cross((0,1,0), dir)
+
+def cameraSpaceYAxis(cameraDir, xaxis):
+    return cross(cameraDir, xaxis)
+
+def computeViewSpace(xaxis, yaxis, zaxis, pos):
+    mat1 = [[*xaxis, 0], [*yaxis, 0], [*zaxis, 0]]
+    mat2 = [[1, 0, 0, -pos[0]], 
+            [0, 1, 0, -pos[1]],
+            [0, 0, 1, -pos[2]],
+            [0, 0, 0, 1]]
+    return matmul(mat1, mat2)
+
+# answer 3
+
+def move(pos, dir, unit):
+    #
+    dir = [dir[0]*unit, dir[1] * unit, dir[2] * unit]
+    mat = [[1, 0, 0, dir[0]], 
+           [0, 1, 0, dir[1]],
+           [0, 0, 1, dir[2]],
+           [0, 0, 0, 1]]
+    pos = [pos[0], pos[1], pos[2], 1]
+    return mat2vec(mat, pos)
+# for mat2vec implementation see solution of
+# primitives
+            
+</code>
+                                               </pre>
+            </div>
+            <div class="tab-pane fade" id="calculus-cpp" role="tabpanel" aria-labelledby="calculus-cpp-tab">
+                <pre>
+<code class="language-cpp">
+
+</code>
+                                               </pre>
+            </div>
+            <div class="tab-pane fade" id="calculus-red" role="tabpanel" aria-labelledby="calculus-red-tab">
+                <pre>
+<code>
+
+</code>
+                                               </pre>
+            </div>
+        </div>
+        <ol>
+            <li>Compute the direction vector of the camera pointing to
+                the center of the rectangle
+            </li>
+            <li>
+                Compute the view space coordinates of the rectangle
+            </li>
+            <li>
+                Move rectangle 5 units in the direction
+                <code>{"x": 0.55, "y": 0.37, "z": 0.74}</code>
+                and draw it using perspective projection
+            </li>
+            <li>Rotate rectangle by 55 degrees towards the direction
+                <code>{"x": 0.55, "y": 0.37, "z": 0.74}</code>
+                and draw it using perspective projection
+            </li>
+
+        </ol>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="../../theme/js/prism.js">
+    </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+
+</body>
