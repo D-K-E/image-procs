@@ -54,7 +54,7 @@
                     </div>
                     <div>
                         <dt>Linear Blend with 2 Images</dt>
-                        <dd>\(f(x) = (1 - \alpha)g_0(x) + \alpha g_1(x) \)</dd>
+                        <dd>\( f(x) = (1 - \alpha)g_0(x) + \alpha g_1(x) \)</dd>
                     </div>
                     <div>
                         <dt>Linear Blend with N Images</dt>
@@ -130,7 +130,7 @@
                 <ul>
                     <li>
                         Sample Image 1:
-                        <img src="https://cdn.allwallpaper.in/wallpapers/640x480/10970/animals-bears-640x480-wallpaper.jpg" width="640" height="480" alt="bear image" />
+                        <img src="../theme/image/processing/bear.jpg" width="640" height="480" alt="bear image" />
                     </li>
                     <li>
                         Sample Image 2:
@@ -196,8 +196,229 @@
                             Szeliski, Richard. Computer Vision: Algorithms and Applications. Texts in Computer Science. London: Springer, 2011.
                         </cite>
                     </li>
-
-
+                </ul>
+            </footer>
+        </section>
+    </div>
+    <div class="container-fluid improc-container">
+        <section class="improc-section" id="linear-filter">
+            <h3>Linear Filter and Fourier Transform</h3>
+            <div class="improc-summary container-fluid">
+                <h4>Problem Statement</h4>
+                <p id="linear-filter-problem-statement" class="lead text-wrap text-monospace" style="width: 50em;">
+                    Each output pixel value is dependent on the weighted sum
+                    of neighboring input pixel
+                    values
+                </p>
+            </div>
+            <h4>Description</h4>
+            <p class="improc-description text-monospace text-wrap" style="width: 62em;">
+                A simple linear filter, or correlation operator, has the following structure:
+                \[ g(i, j) = \sum_{k,l} f(i+k, j+l) h(k,l) \]
+                <ol>
+                    <li>\(h(k,l)\): is a kernel which contains coefficients for
+                        multiplying with neighboring pixels </li>
+                    <li>\(k, l\): is indices for kernel</li>
+                    <li>\(f(i, j)\): accessing pixel values for given
+                        coordinates</li>
+                </ol>
+                The same structure can be represented as:
+                \( g = f \otimes h \)
+            </p>
+            <p class="improc-description text-monospace text-wrap" style="width: 62em;">
+                A variation for the formula commonly known as convolution
+                operator has the following structure:
+                \[ g(i, j) = \sum_{k,l} f(i-k, j-l) h(k,l) \]
+                From time to time it is also written as:
+                \( g = f \ast h \)
+            </p>
+            <p class="improc-description text-monospace text-wrap" style="width: 62em;">
+                Both of these operators are <span>linear shift-invariant</span> operators
+                that is they support superposition:
+                \[ h \circ (f_0 + f_1) = h \circ f_0 + h \circ f_1 \]
+                \( \circ \) represents both convolution and correlation
+                operators.
+                And shift invariance:
+                \[ g(i,j) = f(i+k,j+l) \Leftrightarrow (h \circ g)(i,j) = (h
+                \circ g)(i+k, j+l) \]
+            </p>
+            <p class="improc-description text-monospace text-wrap" style="width: 62em;">
+                Shift variant version, whose weights vary spatially can also be
+                used:
+                \[ g(i,j) = \sum_{k,l} f(i-k, j-l)h(k,l;i,j) \]
+                \(h(k,l;i,j)\) is the convolution kernel for given pixel
+                coordinate i,j.
+            </p>
+            <p class="improc-description text-monospace text-wrap" style="width: 62em;">
+                It should be noted that the interesting part here is the kernel
+                with which we are convolving. The nature of these kernels
+                determine the outcome of the image. So constructing kernels
+                are also a big part of applying filters. Some further
+                terminology is needed to compose some of the advanced filters.
+            </p>
+            <p class="improc-description text-monospace text-wrap" style="width: 62em;">
+                Taking the derivative of an image in vertical direction means
+                convolving it with the following kernel \( \pmatrix{
+                -1 \\
+                0 \\
+                1
+                } \). Taking the derivative of an image in horizontal
+                direction means convolving it with following kernel
+                \(\pmatrix{-1 &#38; 0 &#38; 1}\). Derivative gives us the
+                slope, aka, the rate of change in the behavior of function.
+                Second order derivative is the divergence of the result of the
+                first derivative,
+                that is the rate of change of the derivative.
+            </p>
+            <p class="improc-description text-monospace text-wrap" style="width: 62em;">
+                Gradient of an image is simply a tensor whose values are
+                vectors containing derivatives in x and y direction. It
+                basically takes a point in two dimensional space and outputs a
+                two dimensional vector. For example if \(f(x,y) = p \) where p
+                is the pixel value, the gradient of f is \(\nabla{f(x,y)} =
+                \vec{(f'_x, f'_y} \).
+            </p>
+            <p class="improc-description text-monospace text-wrap" style="width: 62em;">
+                Directional derivative gives how a multi valued function f
+                changes as you move along a vector, for example for a vector
+                \(\vec{v} = (i,j) \) and a function \(f: x,y \to R\),
+                directional derivative is \(\nabla_{\vec{v}}f(x,y) = (i,j)
+                \dot (f'_x, f'_y) = \vec{v} \dot \nabla{f(x,y)} \)
+            </p>
+            <h4>Code snippets</h4>
+            <div class="code-container">
+                <ul class="nav nav-tabs" id="linear-filter-code-tab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="linear-filter-haskell-tab" data-toggle="tab" href="#linear-filter-haskell" role="tab" aria-controls="linear-filter-haskell" aria-selected="true">Haskell</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="linear-filter-python-tab" data-toggle="tab" href="#linear-filter-python" role="tab" aria-controls="linear-filter-python" aria-selected="false">Python</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="linear-filter-cpp-tab" data-toggle="tab" href="#linear-filter-cpp" role="tab" aria-controls="linear-filter-cpp" aria-selected="false">Cpp</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="linear-filter-nim-tab" data-toggle="tab" href="#linear-filter-nim" role="tab" aria-controls="linear-filter-nim" aria-selected="false">Nim</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="linear-filter-red-tab" data-toggle="tab" href="#linear-filter-red" role="tab" aria-controls="linear-filter-red" aria-selected="false">Red</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="linear-filter-code-content">
+                    <div class="tab-pane fade show active" id="linear-filter-haskell" role="tabpanel" aria-labelledby="linear-filter-haskell-tab">
+                        <pre>
+<code class="language-haskell">
+</code>
+                                                           </pre>
+                    </div>
+                    <div class="tab-pane fade" id="linear-filter-python" role="tabpanel" aria-labelledby="linear-filter-python-tab">
+                        <pre>
+<code class="language-python">
+</code>
+                                               </pre>
+                    </div>
+                    <div class="tab-pane fade" id="linear-filter-cpp" role="tabpanel" aria-labelledby="linear-filter-cpp-tab">
+                        <pre>
+<code class="language-cpp">
+</code>
+                                               </pre>
+                    </div>
+                    <div class="tab-pane fade" id="linear-filter-nim" role="tabpanel" aria-labelledby="linear-filter-nim-tab">
+                        <pre>
+<code class="language-nim">
+</code>
+                                               </pre>
+                    </div>
+                    <div class="tab-pane fade" id="linear-filter-red" role="tabpanel" aria-labelledby="linear-filter-red-tab">
+                        <pre>
+<code>
+</code>
+                                               </pre>
+                    </div>
+                </div>
+            </div>
+            <div id="linear-filter-exercise" class="improc-exercise container-fluid">
+                <h4>Exercise</h4>
+                Use the following image for all the exercises
+                <figure>
+                    <img src="../theme/image/processing/prewitt1.jpg" alt="Picture of Albert Einstein">
+                </figure>
+                <ul>
+                    <li>
+                        Convolve the image using \( \pmatrix{
+                        1/9 &#38; 1/9 &#38; 1/9 \\
+                        1/9 &#38; 1/9 &#38; 1/9 \\
+                        1/9 &#38; 1/9 &#38; 1/9 \\
+                        } \)
+                    </li>
+                    <li>
+                        Convolve the image using \( \pmatrix{
+                        -1 &#38; 0 &#38; 1 \\
+                        -1 &#38; 0 &#38; 1 \\
+                        -1 &#38; 0 &#38; 1
+                        } \) known as vertical edge filter
+                    </li>
+                    <li>
+                        Convolve the image using \( \pmatrix{
+                        -1 &#38; -1 &#38; -1 \\
+                        0 &#38; 0 &#38; 0 \\
+                        1 &#38; 1 &#38; 1
+                        } \) known as horizontal edge filter
+                    </li>
+                    <li>
+                        Convolve the image using \( \pmatrix{
+                        1 &#38; 2 &#38; 1 \\
+                        2 &#38; 4 &#38; 2 \\
+                        1 &#38; 2 &#38; 1
+                        } \) known as binomial kernel
+                    </li>
+                    <li>
+                        Convolve the image using kernel that is calculate with
+                        the following formula:
+                        \(
+                        f(x,y) = (\frac{1}{\sigma^2 2 \pi}) e^{-\frac{x^2 +
+                        y^2}{2\sigma^2}}
+                        \) known as gaussian kernel, where x,y is the distance
+                        to the center of the kernel. For this implementation
+                        consider sigma as 2 and kernel size as 5. For example
+                        \( \pmatrix{
+                        k_1 &#38; k_2 &#38; k_3 &#38; k_4 &#38; k_5 \\
+                        k_6 &#38; k_7 &#38; k_8 &#38; k_9 &#38; k_10 \\
+                        k_11 &#38; k_12 &#38; center &#38; k_13 &#38; k_14 \\
+                        k_15 &#38; k_16 &#38; k_17 &#38; k_18 &#38; k_19 \\
+                        k_20 &#38; k_21 &#38; k_22 &#38; k_23 &#38; k_24
+                        } \) the value of \(k_1\) is computed using its
+                        distance to the center pixel. The x,y required for
+                        this is obtained by \( (abs(center_x - k_1x), abs(center_y -
+                        k_1y)) \).
+                    </li>
+                    <li>
+                        Compute the second order derivative of the image in
+                        both directions and blend two resulting images using
+                        \( \alpha = 0.3 \)
+                    </li>
+                    <li>Compute the gradient of the image.
+                    </li>
+                    <li>
+                        Convolve the image using kernel that is calculate with
+                        the following formula:
+                        \(
+                        f(x,y) = (\frac{x^2+y^2}{\sigma^4} - \frac{2}{\sigma^2}) (\frac{1}{\sigma^2 2 \pi}) e^{-\frac{x^2 +
+                        y^2}{2\sigma^2}}
+                        \) known as Laplacian of Gaussian kernel, where x,y is the distance
+                        to the center of the kernel. For this implementation
+                        consider sigma as 2 and kernel size as 5.
+                    </li>
+                    <li>Compute directional derivative of the image along the
+                        unit vector of \(\vec{u} = (\cos(\theta),
+                        \sin(\theta)) \) where theta is 50
+                    </li>
+                </ul>
+            </div>
+            <footer class="container-fluid">
+                <h4>References</h4>
+                <ul id="linear-filter-references">
+                    <li class="work-ref"><cite></cite></li>
                 </ul>
             </footer>
         </section>
