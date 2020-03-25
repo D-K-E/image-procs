@@ -315,6 +315,45 @@
                     <div class="tab-pane fade" id="linear-filter-python" role="tabpanel" aria-labelledby="linear-filter-python-tab">
                         <pre>
 <code class="language-python">
+from typing import List
+
+def make_image_dict(image: List[List[int]]):
+  imageDict = {}
+  rownb = len(image)
+  colnb = len(image[0])
+  for row in range(rownb):
+    for col in range(colnb):
+      imageDict[(row, col)] = image[row][col]
+  return imageDict
+
+def correlationKernelImage(image, kernel, row, col, krow, kcol):
+  return image[row+krow][col + kcol] * kernel[krow][kcol]
+
+
+def convolutionKernelImage(image, kernel, row, col, krow, kcol):
+  return image[row-krow][col - kcol] * kernel[krow][kcol]
+
+def additionKernelImage(image, kernel, row, col, isCorrelation):
+  krownb = len(kernel)
+  kcolnb = len(kernel[0])
+  if isCorrelation:
+    f = correlationKernelImage
+  else:
+    f = convolutionKernelImage
+  counter = 0
+  for krow in range(krownb):
+    for kcol in range(kcolnb):
+      counter += f(image, row, col, krow, kcol)
+  return counter
+
+def linearFilter(image: List[List[int]], 
+kernel: List[List[float]]):
+  newimage = [[0 for col in range(len(image[0]))] for k in range(len(image))]
+  for row in range(len(image)):
+    for col in range(len(image[0])):
+      newimage[row][col] = additionKernelImage(image, kernel, row, col)
+  return newimage
+  
 </code>
                                                </pre>
                     </div>
