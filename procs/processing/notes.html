@@ -442,6 +442,122 @@
             </footer>
         </section>
     </div>
+    <div class="container-fluid improc-container">
+        <section class="improc-section" id="fourier-transform">
+            <h3>Fourier Transforms</h3>
+            <div class="improc-summary container-fluid">
+                <h4>Problem Statement</h4>
+                <p id="fourier-transform-problem-statement" class="lead text-wrap text-monospace" style="width: 50em;">
+                    How to observe waveforms that make up a certain shape ?
+                </p>
+            </div>
+            <h4>Description</h4>
+            <p class="improc-description text-monospace text-wrap" style="width: 62em;">
+                Essentially fourier transforms is a means to observe the
+                frequencies that make a certain waveform. The catch is that
+                anything can be described by using waveforms. In order to
+                truly understand what it does, one needs to understand what a
+                sine wave is.
+                A sine wave resembles to following:
+                <figure id="sinewave-fig">
+                    <object id="sinewave-fig-obj" width="20%" data="../theme/image/processing/sinewave.svg" type="image/svg+xml">
+                    </object>
+                    <figcaption>
+                        <a href="https://commons.wikimedia.org/wiki/File:Activation_sinusoid.svg" title="via Wikimedia Commons">Image by Laughsinthestocks</a> / <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA</a>
+                    </figcaption>
+                </figure>
+            </p>
+            <p class="improc-description text-monospace text-wrap" style="width: 62em;">
+                How do we produce a sine wave ? First of all notice that it is a 2
+                dimensional entity. Second of all that it goes on and on.
+                In its simplest form, it can be described as a function of
+                time as in \(y(t) = A\sin(2\pi f t + \phi \) where
+                <dl>
+                    <dt>A</dt>
+                    <dd>
+                        amplitude, peak deviation of the function from zero.
+                    </dd>
+                    <dt>f</dt>
+                    <dd>
+                        ordinary frequency, the number of oscillations
+                        (cycles) that occur each second of time
+                    </dd>
+                    <dt>\(2\pi f\)</dt>
+                    <dd>Angular frequency. Rate of change of the function
+                        argument in radians per second</dd>
+                    <dt>\(\phi\)</dt>
+                    <dd>phase. The position of the oscillation at \(t=0\) in
+                        radians
+                    </dd>
+                </dl>
+            </p>
+            <h4>Code snippets</h4>
+            <div class="code-container">
+                <ul class="nav nav-tabs" id="fourier-transform-code-tab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="fourier-transform-haskell-tab" data-toggle="tab" href="#fourier-transform-haskell" role="tab" aria-controls="fourier-transform-haskell" aria-selected="true">Haskell</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="fourier-transform-python-tab" data-toggle="tab" href="#fourier-transform-python" role="tab" aria-controls="fourier-transform-python" aria-selected="false">Python</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="fourier-transform-cpp-tab" data-toggle="tab" href="#fourier-transform-cpp" role="tab" aria-controls="fourier-transform-cpp" aria-selected="false">Cpp</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="fourier-transform-nim-tab" data-toggle="tab" href="#fourier-transform-nim" role="tab" aria-controls="fourier-transform-nim" aria-selected="false">Nim</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="fourier-transform-red-tab" data-toggle="tab" href="#fourier-transform-red" role="tab" aria-controls="fourier-transform-red" aria-selected="false">Red</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="fourier-transform-code-content">
+                    <div class="tab-pane fade show active" id="fourier-transform-haskell" role="tabpanel" aria-labelledby="fourier-transform-haskell-tab">
+                        <pre>
+<code class="language-haskell">
+</code>
+                                                           </pre>
+                    </div>
+                    <div class="tab-pane fade" id="fourier-transform-python" role="tabpanel" aria-labelledby="fourier-transform-python-tab">
+                        <pre>
+<code class="language-python">
+</code>
+                                               </pre>
+                    </div>
+                    <div class="tab-pane fade" id="fourier-transform-cpp" role="tabpanel" aria-labelledby="fourier-transform-cpp-tab">
+                        <pre>
+<code class="language-cpp">
+</code>
+                                               </pre>
+                    </div>
+                    <div class="tab-pane fade" id="fourier-transform-nim" role="tabpanel" aria-labelledby="fourier-transform-nim-tab">
+                        <pre>
+<code class="language-nim">
+</code>
+                                               </pre>
+                    </div>
+                    <div class="tab-pane fade" id="fourier-transform-red" role="tabpanel" aria-labelledby="fourier-transform-red-tab">
+                        <pre>
+<code>
+</code>
+                                               </pre>
+                    </div>
+                </div>
+            </div>
+            <div id="fourier-transform-exercise" class="improc-exercise container-fluid">
+                <h4>Exercise</h4>
+                <ul>
+                    <li>
+                    </li>
+                </ul>
+            </div>
+            <footer class="container-fluid">
+                <h4>References</h4>
+                <ul id="fourier-transform-references">
+                    <li class="work-ref"><cite></cite></li>
+                </ul>
+            </footer>
+        </section>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">
     </script>
